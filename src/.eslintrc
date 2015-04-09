@@ -1,0 +1,19 @@
+{
+	"env": {
+		"node": true,
+		"es6": true
+	},
+	"rules": {
+		"global-strict": false,
+		"curly": false,
+		"no-underscore-dangle": false
+	},
+	"ecmaFeatures": {
+		"arrowFunctions": true,
+		"blockBindings": true,
+		"classes": true,
+		"jsx": true,
+		"modules": true,
+		"objectLiteralShorthandMethods": true
+	}
+}
