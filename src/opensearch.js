@@ -9,6 +9,10 @@ const SETTINGS_DEFAULT = {
 
 const COMMAND_DEFAULT = {
 
+  name: "opensearch",
+
+  hidden: true,
+
   signals: {
     "input": {
       "standard-query-input": ["OpenSearch.getSuggestions"]
@@ -57,13 +61,7 @@ export default {
     copal.bricks.addDataBrick( "OpenSearch.getURL", this.brickGetURL );
     copal.bricks.addDataBrick( "OpenSearch.getSuggestions", this.brickGetSuggestions.bind( this ) );
 
-    // just a test
-    copal.addCommand( _.defaults({
-      name: "wikipedia",
-      initialData: {
-        source: "wikipedia"
-      }
-    }, COMMAND_DEFAULT) );
+    copal.addCommand( COMMAND_DEFAULT );
   },
 
   /**
