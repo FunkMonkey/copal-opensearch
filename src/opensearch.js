@@ -2,29 +2,8 @@ import path from "path";
 import _ from "lodash";
 import opensearch from "opensearch";
 
-const SETTINGS_DEFAULT = {
-  "sources": [],
-  "commands": []
-};
-
-const COMMAND_DEFAULT = {
-
-  name: "opensearch",
-
-  hidden: true,
-
-  signals: {
-    "input": {
-      "standard-query-input": ["OpenSearch.getSuggestions"]
-    },
-    "output": {
-      "list-title-url-icon": []
-    },
-    "listitem-execute": {
-      "listitem-title-url-icon": ["OpenSearch.getURL", "Common.open"]
-    }
-  }
-};
+import DEFAULT_SETTINGS_OPENSEARCH from "./default-settings-opensearch.json";
+import COMMAND_OPENSEARCH from "./command-opensearch.json";
 
 /**
  * OpenSearch extension for copal
@@ -38,16 +17,15 @@ export default {
    * @param    {CoPal}   copal   CoPal instance
    */
   init( copal ) {
-    this.openSearchDir = path.join( copal.profileDir, "opensearch" );
-    this.settings = copal.loadProfileConfig( path.join( "opensearch", "settings.json" ) ) || {};
-    this.settings = copal.defaultifyOptions( this.settings, SETTINGS_DEFAULT, true );
+    this.settings = copal.loadProfileConfig( "settings-opensearch.json" ) || {};
+    this.settings = copal.defaultifyOptions( this.settings, DEFAULT_SETTINGS_OPENSEARCH, true );
 
     this.sources = {};
 
     this.settings.sources.forEach( src => {
 
       if( src.type === "file")
-        src.src = path.join( this.openSearchDir, src.src );
+        src.src = path.join( copal.profileDir, src.src );
 
       opensearch( src.src, { type: src.type } ).
         then( provider => {
@@ -61,7 +39,7 @@ export default {
     copal.bricks.addDataBrick( "OpenSearch.getURL", this.brickGetURL );
     copal.bricks.addDataBrick( "OpenSearch.getSuggestions", this.brickGetSuggestions.bind( this ) );
 
-    copal.addCommand( COMMAND_DEFAULT );
+    copal.addCommand( COMMAND_OPENSEARCH );
   },
 
   /**

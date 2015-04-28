@@ -1,0 +1,18 @@
+{
+
+  "name": "opensearch",
+
+  "hidden": true,
+
+  "signals": {
+    "input": {
+      "standard-query-input": ["OpenSearch.getSuggestions"]
+    },
+    "output": {
+      "list-title-url-icon": []
+    },
+    "listitem-execute": {
+      "listitem-title-url-icon": ["OpenSearch.getURL", "Common.open"]
+    }
+  }
+}
