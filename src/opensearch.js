@@ -53,6 +53,11 @@ export default {
   brickGetSuggestions( cmdSession, inputData ) {
     var provider = this.sources[ inputData.source ];
     var queryString = inputData.queryString || "";
+
+    // temporary hack, so we don't get Bad request for Google, because of empty string
+    if( queryString === "" )
+      return [];
+
     return provider.getSuggestions( { searchTerms: queryString } ).then( res => {
       return res[1].map( (searchResult, index) => {
         return {
