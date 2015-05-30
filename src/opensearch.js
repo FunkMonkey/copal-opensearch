@@ -50,9 +50,12 @@ export default {
    *
    * @return   {Array}                         List of results
    */
-  brickGetSuggestions( cmdSession, inputData ) {
-    var provider = this.sources[ inputData.source ];
-    var queryString = inputData.queryString || "";
+  brickGetSuggestions( error, dataAndMeta ) {
+    if( error )
+      throw error;
+
+    var provider = this.sources[ dataAndMeta.data.source ];
+    var queryString = dataAndMeta.data.queryString || "";
 
     // temporary hack, so we don't get Bad request for Google, because of empty string
     if( queryString === "" )
@@ -69,7 +72,10 @@ export default {
     } );
   },
 
-  brickGetURL( cmdSession, data ) {
-    return data.url;
+  brickGetURL( error, dataAndMeta ) {
+    if( error )
+      throw error;
+
+    return dataAndMeta.data.url;
   }
 };
