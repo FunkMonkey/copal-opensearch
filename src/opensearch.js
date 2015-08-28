@@ -2,6 +2,8 @@ import path from "path";
 import _ from "lodash";
 import opensearch from "opensearch";
 
+import dec from "copal-core/utils/decorators";
+
 import DEFAULT_SETTINGS_OPENSEARCH from "./default-settings-opensearch.json";
 import COMMAND_OPENSEARCH from "./command-opensearch.json";
 
@@ -36,8 +38,8 @@ export default {
         });
     } );
 
-    copal.bricks.addDataBrick( "OpenSearch.getURL", this.brickGetURL );
-    copal.bricks.addDataBrick( "OpenSearch.getSuggestions", this.brickGetSuggestions.bind( this ) );
+    copal.bricks.addTransformBrick( "OpenSearch.getURL", this.brickGetURL );
+    copal.bricks.addTransformBrick( "OpenSearch.getSuggestions", this.brickGetSuggestions.bind( this ) );
 
     copal.addCommand( COMMAND_OPENSEARCH );
   },
@@ -50,32 +52,32 @@ export default {
    *
    * @return   {Array}                         List of results
    */
-  brickGetSuggestions( error, dataAndMeta ) {
-    if( error )
-      throw error;
+  @dec.wrapInStreamPromise
+  brickGetSuggestions( brickData, data ) {
 
-    var provider = this.sources[ dataAndMeta.data.source ];
-    var queryString = dataAndMeta.data.queryString || "";
+    var provider = this.sources[ data.source ];
+    var queryString = data.queryString || "";
 
     // temporary hack, so we don't get Bad request for Google, because of empty string
-    if( queryString === "" )
-      return [];
+    if( queryString === "" ) {
+      return Promise.resolve( [] );
+    }
 
     return provider.getSuggestions( { searchTerms: queryString } ).then( res => {
-      return res[1].map( (searchResult, index) => {
+      const newData = res[1].map( (searchResult, index) => {
         return {
-          title: res[1][index],
-          description: res[2][index] || "",
-          url: res[3][index] || ""
-        };
-      } );
+            title: res[1][index],
+            description: res[2][index] || "",
+            url: res[3][index] || ""
+          };
+        } );
+
+      return newData;
     } );
   },
 
-  brickGetURL( error, dataAndMeta ) {
-    if( error )
-      throw error;
-
-    return dataAndMeta.data.url;
+  @dec.wrapInStreamSync
+  brickGetURL( brickMeta, data ) {
+    return data.url;
   }
 };

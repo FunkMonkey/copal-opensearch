@@ -4,15 +4,8 @@
 
   "hidden": true,
 
-  "signals": {
-    "input": {
-      "standard-query-input": ["OpenSearch.getSuggestions"]
-    },
-    "output": {
-      "list-title-url-icon": []
-    },
-    "listitem-execute": {
-      "listitem-title-url-icon": ["OpenSearch.getURL", "Common.open"]
-    }
+  "streams": {
+    "input": ["OpenSearch.getSuggestions", ">output"],
+    "listitem-execute": ["OpenSearch.getURL", "Common.open"]
   }
 }

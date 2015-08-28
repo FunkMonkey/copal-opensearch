@@ -20,7 +20,7 @@ var GLOB_CONFIGS =  "./src/**/*.json";
 gulp.task( "build:scripts", function() {
   return gulp.src( GLOB_SCRIPTS )
              .pipe( sourcemaps.init() )
-             .pipe( babel() )
+             .pipe( babel( { optional: ["es7.decorators"] } ) )
              .on( "error", onError )
              .pipe( sourcemaps.write( "." ) )
              .pipe( gulp.dest( "build" ) );

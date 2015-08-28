@@ -1,19 +1,21 @@
 {
-  "env": {
-    "node": true,
-    "es6": true
-  },
-  "rules": {
-    "global-strict": false,
-    "curly": false,
-    "no-underscore-dangle": false
-  },
-  "ecmaFeatures": {
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "classes": true,
-    "jsx": true,
-    "modules": true,
-    "objectLiteralShorthandMethods": true
-  }
+	"extends": "eslint:recommended",
+	"env": {
+		"node": true,
+		"es6": true
+	},
+	"rules": {
+		"global-strict": 0,
+		"curly": 0,
+		"no-underscore-dangle": 0,
+		"no-unused-vars": [2, {"vars": "all", "args": "after-used"}]
+	},
+	"ecmaFeatures": {
+		"arrowFunctions": true,
+		"blockBindings": true,
+		"classes": true,
+		"jsx": true,
+		"modules": true,
+		"objectLiteralShorthandMethods": true
+	}
 }
