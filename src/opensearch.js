@@ -1,5 +1,4 @@
 import path from "path";
-import _ from "lodash";
 import opensearch from "opensearch";
 
 import dec from "copal-core/utils/decorators";
@@ -34,7 +33,7 @@ export default {
           this.sources[src.name] = provider;
         })
         .catch( e => {
-          console.log( e );
+          console.log( e ); // TODO: better error handling
         });
     } );
 
