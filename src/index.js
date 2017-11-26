@@ -26,7 +26,7 @@ export default function ( core ) {
     services: {}
   };
 
-  core.addOperators( getOperators( plugin ) );
+  core.commands.connector.addOperators( getOperators( plugin ) );
 
   const google = fs.readFileSync( path.join( __dirname, '..', 'google.xml' ), { encoding: 'utf8' } );
   plugin.services.google = OpenSearchService.fromXml( google );
