@@ -1,13 +1,8 @@
 import path from 'path';
-import fs from 'fs';
-import Rx from 'rxjs';
+import { Observable } from 'rxjs';
 import { OpenSearchService } from 'opensearch-browser/dist/service';
 import { registerFormat } from 'opensearch-browser/dist/formats/index';
 import getOperators from './operators';
-
-// import DEFAULT_SETTINGS_OPENSEARCH from './default-settings-opensearch.json';
-// import COMMAND_OPENSEARCH from './command-opensearch.json';
-
 
 const SUGGESTION_FORMAT = {
   parse( response ) {
@@ -15,8 +10,28 @@ const SUGGESTION_FORMAT = {
   }
 };
 
-// register the format under the given mime-type
+// register the format under the given mime-type, TODO: remove in next version of opensearch-browser
 registerFormat( 'application/x-suggestions+json', SUGGESTION_FORMAT );
+
+function loadServiceFromFile( fs, filePath ) {
+  const readFile = Observable.bindNodeCallback( fs.readFile );
+  return readFile( filePath, { encoding: 'utf8' } )
+    .map( xmlStr => OpenSearchService.fromXml( xmlStr ) );
+}
+
+function loadServicesFromProfile( fs, dirPath ) {
+  const readdir = Observable.bindNodeCallback( fs.readdir );
+
+  return readdir( dirPath )
+    .map( files => files.filter( file => path.extname( file ) === '.xml' ) )
+    .map( xmlFiles =>
+      xmlFiles.map( file => loadServiceFromFile( fs, path.join( dirPath, file ) ) ) )
+    .flatMap( servicesObs => Observable.from( servicesObs ).mergeAll() )
+    .reduce( ( services, currService ) => {
+      services[ currService.getDescription().shortName ] = currService;
+      return services;
+    }, {} );
+}
 
 /**
  * OpenSearch extension for copal
@@ -28,9 +43,9 @@ export default function ( core ) {
 
   core.commands.connector.addOperators( getOperators( plugin ) );
 
-  const google = fs.readFileSync( path.join( __dirname, '..', 'google.xml' ), { encoding: 'utf8' } );
-  plugin.services.google = OpenSearchService.fromXml( google );
-  console.log( plugin );
-
-  return Rx.Observable.of( plugin );
+  return loadServicesFromProfile( core.profile.fs, '/opensearch' )
+    .map( services => {
+      plugin.services = services;
+      return plugin;
+    } );
 }
