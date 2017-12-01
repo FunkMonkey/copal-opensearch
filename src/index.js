@@ -2,6 +2,7 @@ import path from 'path';
 import { Observable } from 'rxjs';
 import { OpenSearchService } from 'opensearch-browser/dist/service';
 import { registerFormat } from 'opensearch-browser/dist/formats/index';
+import components from './components';
 import getOperators from './operators';
 
 const SUGGESTION_FORMAT = {
@@ -42,6 +43,7 @@ export default function ( core ) {
   };
 
   core.commands.connector.addOperators( getOperators( plugin ) );
+  core.commands.templates.addComponents( components );
 
   return loadServicesFromProfile( core.profile.fs, '/opensearch' )
     .map( services => {
