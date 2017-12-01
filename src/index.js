@@ -1,4 +1,5 @@
 import path from 'path';
+import R from 'ramda';
 import { Observable } from 'rxjs';
 import { OpenSearchService } from 'opensearch-browser/dist/service';
 import { registerFormat } from 'opensearch-browser/dist/formats/index';
@@ -48,6 +49,20 @@ export default function ( core ) {
   return loadServicesFromProfile( core.profile.fs, '/opensearch' )
     .map( services => {
       plugin.services = services;
+
+      const commands = R.map( service => ( {
+        name: service.getDescription().shortName,
+        extends: 'opensearch-launcher',
+        description: service.getDescription().description,
+        data: {
+          opensearch: {
+            service: service.getDescription().shortName
+          }
+        }
+      } ), services );
+
+      core.commands.templates.addComponents( R.values( commands ) );
+
       return plugin;
     } );
 }
