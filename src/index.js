@@ -1,7 +1,12 @@
 import path from 'path';
 import R from 'ramda';
 import { bindNodeCallback, from } from 'rxjs';
-import { flatMap, map, mergeAll, reduce } from 'rxjs/operators';
+import {
+  flatMap,
+  map,
+  mergeAll,
+  reduce
+} from 'rxjs/operators';
 import { OpenSearchService } from 'opensearch-browser/dist/service';
 import { registerFormat } from 'opensearch-browser/dist/formats/index';
 import components from './components';
@@ -28,8 +33,7 @@ function loadServicesFromProfile( fs, dirPath ) {
 
   return readdir( dirPath ).pipe(
     map( files => files.filter( file => path.extname( file ) === '.xml' ) ),
-    map( xmlFiles =>
-      xmlFiles.map( file => loadServiceFromFile( fs, path.join( dirPath, file ) ) ) ),
+    map( xmlFiles => xmlFiles.map( file => loadServiceFromFile( fs, path.join( dirPath, file ) ) ) ),
     flatMap( servicesObs => from( servicesObs ).pipe( mergeAll() ) ),
     reduce( ( services, currService ) => {
       services[ currService.getDescription().shortName ] = currService;
@@ -65,7 +69,7 @@ export default function ( core ) {
       } ), services );
 
       core.commands.templates.addComponents( R.values( commands ) );
-      console.log('opensearch done');
+      console.log( 'opensearch done' );
 
       return plugin;
     } )
